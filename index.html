@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secure Management System</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:linear-gradient(135deg,#f2f6fa 0%,#eef5f2 100%);color:#172033;
+ font-family:Arial,sans-serif;min-height:100vh;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+header{
+ background:#fff;padding:18px 5%;
+ display:flex;justify-content:space-between;
+ align-items:center;box-shadow:0 2px 10px #0000000b;
+}
+.header-brand{display:flex;align-items:center;gap:13px;min-width:0}
+.header-brand .pccm-header-logo{width:58px;height:58px;object-fit:contain;flex:0 0 58px}
+.logo{font-size:21px;font-weight:800;color:#176b55;line-height:1.2}
+@media(max-width:500px){
+  .header-brand{gap:9px}
+  .header-brand .pccm-header-logo{width:44px;height:44px;flex-basis:44px}
+  .logo{font-size:clamp(13px,3.8vw,17px)}
+  .logo-subtitle{font-size:9px;line-height:1.3}
+}
+.logo span{color:#243b70}
+.logo-subtitle{display:block;margin-top:4px;color:#1e5aa8;font-size:11px;font-weight:700;letter-spacing:.35px}
+.site-video-bg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;opacity:.22;pointer-events:none}
+.site-video-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#f2f6fae8,#eef5f2e8);z-index:-1;pointer-events:none}
+.pccm-login-logo{width:76px;height:76px;object-fit:contain;display:block;margin:0 auto 12px;border-radius:50%;background:#fff;padding:4px}
+.program-tag{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800;margin-top:8px}
+.program-hm{background:#e2f6e8;color:#16723a;border:1px solid #a9dfb7}
+.program-oa{background:#fff6ce;color:#806000;border:1px solid #f0df8a}
+.program-bsed{background:#e5efff;color:#174f9d;border:1px solid #b7d0fa}
+.program-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.program-summary-card{border:1px solid #e5e8ef;border-radius:12px;padding:15px;background:#fff;min-width:0}
+.program-summary-card h3{font-size:14px;line-height:1.4}
+.program-summary-card .summary-k-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}
+.summary-k-item{background:#f8fafc;border-radius:8px;padding:8px;font-size:11px}
+.summary-k-item strong{display:block;font-size:16px;margin-top:3px}
+.filter-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end}
+.filter-grid label{display:block}
+.filter-grid select,.filter-grid input{margin:6px 0 10px}
+@media(max-width:700px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.program-summary-grid{grid-template-columns:1fr}}
+@media(max-width:420px){.filter-grid{grid-template-columns:1fr}}
+.container{max-width:1200px;margin:35px auto;padding:0 20px}
+.hidden{display:none!important}
+.card{
+ background:white;border:1px solid #e5e8ef;
+ border-radius:14px;padding:22px;
+ box-shadow:0 2px 5px #00000008;
+}
+button.primary{
+ background:#16875c;color:white;border:0;
+ border-radius:8px;padding:11px 17px;
+}
+button.secondary{
+ background:#edf1f6;color:#344054;border:0;
+ border-radius:8px;padding:10px 15px;
+}
+button.danger{
+ background:#feecec;color:#bd3030;border:0;
+ border-radius:7px;padding:8px 12px;
+}
+input,select{
+ width:100%;padding:12px;border:1px solid #dce1e9;
+ border-radius:8px;margin:7px 0 15px;
+ background:white;
+}
+label{font-size:12px;font-weight:bold;color:#475467}
+h1,h2,h3,p{margin-top:0}
+.muted{color:#7b8492;font-size:13px}
+.auth{
+ max-width:470px;margin:58px auto 70px;padding:34px;
+ border:1px solid #e3e9ef;border-radius:20px;
+ box-shadow:0 18px 55px #183b3215;
+}
+.auth h2{margin-bottom:8px;font-size:27px;letter-spacing:-.5px}
+.auth button{margin:4px 3px 10px 0}
+.auth-intro{margin:-34px -34px 25px;padding:30px 34px 25px;border-radius:19px 19px 0 0;background:linear-gradient(125deg,#087b58,#234d80);color:white}
+.auth-intro .eyebrow{font-size:11px;letter-spacing:2px;font-weight:800;opacity:.8;margin-bottom:12px}
+.auth-intro h1{font-size:25px;line-height:1.2;margin:0 0 9px}
+.auth-intro p{font-size:13px;line-height:1.6;color:#e5f4ef;margin:0}
+.auth-subtitle{font-size:13px;color:#7b8492;line-height:1.6;margin-bottom:22px}
+.auth form{margin-top:8px}
+.auth input{height:46px;margin:8px 0 17px;background:#fbfcfd}
+.auth label{letter-spacing:.5px}
+.auth .primary{min-height:45px;min-width:130px;font-weight:700}
+.auth .secondary{min-height:45px}
+.auth a{color:#13865f;font-weight:700;text-decoration:none}
+.auth a:hover{text-decoration:underline}
+.auth-footer{border-top:1px solid #edf0f3;margin-top:14px;padding-top:17px;font-size:13px;color:#7b8492}
+.login-layout{
+  display:none;align-items:center;gap:42px;max-width:1120px;
+  margin:48px auto 65px;padding:0 20px;
+}
+.login-layout:not(.hidden){display:flex}
+.welcome-panel{flex:1;min-width:0;padding:18px 0;color:#172033}
+.welcome-eyebrow{
+  display:flex;align-items:center;gap:11px;color:#07865d;
+  font-size:14px;font-weight:800;letter-spacing:3px;margin-bottom:28px
+}
+.welcome-dot{width:11px;height:11px;border-radius:50%;background:#16875c;box-shadow:0 0 0 7px #16875c18}
+.welcome-panel h1{
+  font-size:clamp(42px,5.3vw,76px);line-height:1.08;letter-spacing:-2.5px;
+  margin:0 0 30px;font-weight:800;color:#17233b
+}
+.welcome-panel h1 span{color:#168b61}
+.welcome-copy{font-size:19px;line-height:1.9;color:#64748b;margin-bottom:38px;max-width:700px}
+.welcome-features{display:grid;gap:22px}
+.welcome-feature{display:flex;align-items:center;gap:18px}
+.welcome-feature-icon{
+  width:49px;height:49px;min-width:49px;border-radius:15px;
+  display:grid;place-items:center;background:#e3f4ed;color:#07865d;
+  font-size:24px;font-weight:700
+}
+.welcome-feature strong{display:block;font-size:16px;margin-bottom:6px;color:#17233b}
+.welcome-feature small{font-size:14px;color:#718096;line-height:1.5}
+.login-card{width:100%;max-width:450px;flex:0 0 450px;margin:0}
+@media(max-width:850px){
+  .login-layout{gap:24px}
+  .login-card{flex-basis:390px}
+  .welcome-panel h1{font-size:46px}
+}
+@media(max-width:700px){
+  .login-layout{display:none;flex-direction:column;align-items:stretch;gap:24px;margin:20px auto 35px;padding:0 12px}
+  .login-layout:not(.hidden){display:flex}
+  .welcome-panel{padding:12px 5px 0}
+  .welcome-eyebrow{font-size:11px;letter-spacing:2px;margin-bottom:18px}
+  .welcome-panel h1{font-size:clamp(37px,10vw,54px);letter-spacing:-1.5px;margin-bottom:17px}
+  .welcome-copy{font-size:15px;line-height:1.7;margin-bottom:23px}
+  .welcome-features{gap:15px}
+  .welcome-feature-icon{width:43px;height:43px;min-width:43px}
+  .welcome-feature strong{font-size:14px}
+  .welcome-feature small{font-size:12px}
+  .login-card{max-width:100%;flex:none;margin:0}
+}
+
+.auth-role{display:flex;gap:8px;margin-bottom:22px}
+.auth-role button{flex:1;margin:0;padding:11px 8px;border:1px solid #e3e9ef;background:#f7f9fb;color:#536171;border-radius:9px;font-weight:700}
+.auth-role button.active{background:#e5f4ed;color:#087b58;border-color:#b8dfcc}
+.stats{
+ display:grid;grid-template-columns:repeat(4,1fr);
+ gap:15px;margin:25px 0;
+}
+.stat strong{font-size:28px;display:block;margin:12px 0 5px}
+.grid{
+ display:grid;grid-template-columns:repeat(4,1fr);
+ gap:15px;margin:20px 0;
+}
+.k-card{
+ padding:20px;background:#fff;border:1px solid #e5e8ef;
+ border-radius:13px;cursor:pointer;
+ transition:.2s;
+}
+.k-card:hover{transform:translateY(-3px);box-shadow:0 5px 15px #00000010}
+.k-icon{
+ width:55px;height:55px;min-width:55px;border-radius:15px;
+ display:grid;place-items:center;
+ background:#e8f4ef;color:#16875c;
+ font-size:27px;margin-bottom:13px;
+}
+.k-card h3{font-size:15px;line-height:1.4;min-height:42px;overflow-wrap:anywhere}
+.k-card .progress span{transition:width .4s ease}
+@media(max-width:500px){.k-icon{width:47px;height:47px;min-width:47px;font-size:24px}.k-card h3{font-size:13px;min-height:48px}}
+.progress{
+ height:8px;background:#e9e9f8;
+ border-radius:20px;margin:12px 0;
+ overflow:hidden;
+}
+.progress span{display:block;height:100%;background:#18a36c}
+.status{
+ display:inline-block;border-radius:20px;
+ padding:5px 9px;font-size:11px;font-weight:bold;
+}
+.approved{background:#e4f7ec;color:#16834f}
+.pending{background:#fff5dc;color:#a56a00}
+.rejected{background:#fee8e8;color:#bd3030}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{text-align:left;padding:13px;border-bottom:1px solid #edf0f4;font-size:13px}
+th{background:#f8fafc}
+.table-wrap{overflow-x:auto}
+.section{margin:25px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.proof-preview{max-width:130px;max-height:100px;object-fit:contain}
+.modal{
+ position:fixed;inset:0;background:#0008;
+ display:none;align-items:center;justify-content:center;
+ padding:15px;z-index:10;
+}
+.modal.show{display:flex}
+.modal-content{
+ background:white;border-radius:15px;padding:25px;
+ width:100%;max-width:480px;max-height:90vh;overflow:auto;
+}
+.modal-close{float:right;border:0;background:none;font-size:24px}
+.notice{padding:12px;border-radius:8px;background:#eef6ff;color:#315d89;font-size:12px}
+@media(max-width:850px){
+ .grid{grid-template-columns:repeat(2,1fr)}
+ .stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:500px){
+ .auth{margin:28px auto;padding:23px;border-radius:16px}
+ .auth-intro{margin:-23px -23px 22px;padding:25px 23px 22px;border-radius:15px 15px 0 0}
+ .auth-intro h1{font-size:22px}
+ .auth h2{font-size:23px}
+ header{padding:14px;gap:8px;flex-wrap:wrap}
+ .container{margin:20px auto;padding:0 12px}
+ .grid{gap:9px}
+ .k-card{padding:13px}
+ .stats{gap:9px}
+ .stat{padding:14px}
+}
+
+
+/* Additional phone-fit refinements */
+html{width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%;}
+body{width:100%;overflow-x:hidden;}
+img,video,iframe{max-width:100%;}
+button,input,select,textarea{max-width:100%;}
+@media(max-width:700px){
+  header{padding:11px 14px;min-height:58px;}
+  .logo{font-size:clamp(14px,4vw,18px);line-height:1.25;}
+  header #headerActions{margin-left:auto;}
+  header #headerActions button{font-size:12px;padding:9px 13px;}
+  .container{width:100%;max-width:100%;margin:14px auto;padding:0 12px;}
+  .login-layout:not(.hidden){display:flex;flex-direction:column;align-items:stretch;gap:17px;margin:14px auto 24px;padding:0 12px;width:100%;}
+  .welcome-panel{width:100%;padding:8px 2px 0;}
+  .welcome-eyebrow{font-size:10px;letter-spacing:1.7px;margin-bottom:13px;gap:8px;}
+  .welcome-dot{width:9px;height:9px;min-width:9px;}
+  .welcome-panel h1{font-size:clamp(29px,8.2vw,42px);line-height:1.08;letter-spacing:-1.2px;margin:0 0 13px;overflow-wrap:anywhere;}
+  .welcome-copy{font-size:13px;line-height:1.55;margin-bottom:17px;}
+  .welcome-features{gap:12px;}
+  .welcome-feature{align-items:flex-start;gap:11px;min-width:0;}
+  .welcome-feature-icon{width:36px;height:36px;min-width:36px;border-radius:11px;font-size:18px;}
+  .welcome-feature strong{font-size:12px;line-height:1.3;margin-bottom:3px;}
+  .welcome-feature small{display:block;font-size:11px;line-height:1.4;overflow-wrap:anywhere;}
+  .login-card{width:100%;max-width:100%;flex:none;margin:0;padding:17px;border-radius:15px;}
+  .auth-intro{margin:-17px -17px 17px;padding:18px 17px 16px;border-radius:14px 14px 0 0;}
+  .auth-intro h1{font-size:19px;line-height:1.2;}
+  .auth-intro p{font-size:11px;line-height:1.45;}
+  .auth-role{gap:6px;margin-bottom:15px;}
+  .auth-role button{font-size:11px;padding:9px 5px;}
+  .auth h2{font-size:19px;}
+  .auth-subtitle{font-size:11px;line-height:1.45;margin-bottom:14px;}
+  .auth label{font-size:10px;}
+  .auth input{height:41px;font-size:13px;margin:6px 0 12px;padding:10px;}
+  .auth .primary,.auth .secondary{min-height:40px;font-size:12px;padding:9px 13px;}
+  .auth-footer{font-size:11px;line-height:1.5;padding-top:12px;}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0;}
+  .stat{min-width:0;padding:12px;}
+  .stat strong{font-size:22px;margin:8px 0 4px;}
+  .stat .muted,.stat small{font-size:10px;line-height:1.35;}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:13px 0;}
+  .k-card{min-width:0;padding:11px;border-radius:11px;}
+  .k-icon{width:39px;height:39px;min-width:39px;font-size:20px;margin-bottom:9px;border-radius:11px;}
+  .k-card h3{font-size:11px;line-height:1.3;min-height:31px;margin-bottom:7px;overflow-wrap:anywhere;}
+  .k-card .status{font-size:9px;padding:4px 6px;}
+  .k-card button{font-size:10px;padding:8px 9px;max-width:100%;}
+  .progress{height:6px;margin:8px 0;}
+  .section{margin:16px 0;}
+  .section h2{font-size:17px;line-height:1.25;}
+  .section .muted{font-size:11px;line-height:1.45;}
+  .card{padding:14px;border-radius:12px;}
+  .table-wrap{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{min-width:590px;}
+  th,td{font-size:10px;padding:9px 8px;}
+  .actions{gap:6px;}
+  .actions input,.actions select{width:100%;min-width:0;font-size:12px;margin:3px 0 8px;}
+  .modal{padding:9px;}
+  .modal-content{padding:17px;width:100%;max-width:100%;}
+}
+@media(max-width:380px){
+  header{padding:9px 10px;}
+  .logo{font-size:13px;}
+  header #headerActions button{font-size:11px;padding:8px 10px;}
+  .login-layout:not(.hidden){padding:0 9px;}
+  .welcome-panel h1{font-size:29px;letter-spacing:-.9px;}
+  .welcome-copy{font-size:12px;}
+  .welcome-feature small{font-size:10px;}
+  .login-card{padding:14px;}
+  .auth-intro{margin:-14px -14px 14px;padding:16px 14px;}
+  .grid{gap:7px;}
+  .k-card{padding:9px;}
+  .k-card h3{font-size:10px;}
+}
+
+
+/* Student profile */
+.profile-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.profile-avatar{width:104px;height:104px;border-radius:50%;object-fit:cover;border:4px solid #e5f4ed;background:#edf2f7;display:block}
+.profile-layout{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:start}
+.profile-photo{text-align:center}
+.profile-photo input{font-size:11px}
+.profile-note{font-size:11px;color:#7b8492;line-height:1.45}
+.profile-modal-content{max-width:560px}
+@media(max-width:500px){.profile-layout{grid-template-columns:1fr;gap:12px}.profile-photo{display:flex;align-items:center;gap:14px;text-align:left}.profile-avatar{width:82px;height:82px;min-width:82px}}
+
+
+/* Left-side student profile panel */
+.student-dashboard-layout{display:grid;grid-template-columns:255px minmax(0,1fr);gap:22px;align-items:start}
+.student-profile-sidebar{position:sticky;top:20px;text-align:center;padding:24px 18px;border:1px solid #e5e8ef;border-radius:14px;background:#fff;box-shadow:0 2px 5px #00000008}
+.student-profile-sidebar .profile-avatar{width:112px;height:112px;margin:0 auto 14px}
+.student-profile-sidebar h2{font-size:19px;margin:0 0 5px;overflow-wrap:anywhere}
+.student-profile-sidebar .profile-meta{font-size:12px;color:#7b8492;line-height:1.6;overflow-wrap:anywhere;margin-bottom:18px}
+.student-profile-sidebar .profile-actions{display:grid;grid-template-columns:1fr;gap:9px;margin-top:0}
+.student-profile-sidebar .profile-actions button{width:100%;padding:11px 10px}
+.student-dashboard-main{min-width:0}
+.student-dashboard-welcome{margin-bottom:20px}
+@media(max-width:850px){.student-dashboard-layout{grid-template-columns:210px minmax(0,1fr);gap:14px}.student-profile-sidebar{padding:18px 12px}}
+@media(max-width:650px){
+ .student-dashboard-layout{grid-template-columns:1fr;gap:14px}
+ .student-profile-sidebar{position:static;display:grid;grid-template-columns:78px minmax(0,1fr);gap:5px 13px;text-align:left;align-items:center;padding:14px}
+ .student-profile-sidebar .profile-avatar{grid-row:1 / span 2;width:72px;height:72px;margin:0}
+ .student-profile-sidebar h2{font-size:16px}
+ .student-profile-sidebar .profile-meta{margin:0;font-size:11px}
+ .student-profile-sidebar .profile-actions{grid-column:1 / -1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
+ .student-profile-sidebar .profile-actions button{font-size:11px;padding:9px 5px}
+}
+
+
+/* Responsive administrator profile and data-management UI */
+.admin-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;align-items:start}
+.admin-profile-sidebar{position:sticky;top:14px;background:#fff;border:1px solid #e5e8ef;border-radius:14px;padding:14px;box-shadow:0 2px 8px #00000008}
+.admin-avatar{width:64px;height:64px;border-radius:50%;background:#e8f0ff;color:#2868c7;display:grid;place-items:center;font-size:24px;font-weight:800;margin:0 auto 9px}
+/* Small green presence dot on the currently signed-in administrator's profile photo */
+.admin-avatar{position:relative}
+.admin-avatar::after{content:"";position:absolute;right:1px;bottom:2px;width:13px;height:13px;border-radius:50%;background:#22c55e;border:3px solid #fff;box-shadow:0 1px 4px #0002}
+
+.admin-profile-sidebar h2{text-align:center;font-size:16px;margin:0 0 5px;overflow-wrap:anywhere}
+.admin-profile-sidebar .admin-meta{text-align:center;color:#6b7280;font-size:11px;line-height:1.5;margin-bottom:12px;overflow-wrap:anywhere}
+.admin-profile-sidebar .admin-side-actions{display:grid;gap:7px}
+.admin-profile-sidebar button{width:100%;padding:9px 10px;font-size:13px}
+.admin-main{min-width:0}
+.master-admin-tools{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}
+.master-admin-tools button{min-width:190px}
+.master-section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.master-section-heading h2,.master-section-heading p{margin-top:0}
+.master-section-heading button{flex:0 0 auto}
+@media(max-width:560px){.master-admin-tools{display:grid;grid-template-columns:1fr}.master-admin-tools button{width:100%;min-width:0}.master-section-heading{align-items:stretch;flex-direction:column}.master-section-heading button{width:100%}}
+.admin-settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.admin-danger-box{border:1px solid #f1caca;background:#fffafa;border-radius:12px;padding:15px}
+.admin-danger-box h3{margin:0 0 8px;font-size:16px}
+.admin-danger-box p{font-size:13px;color:#687386;margin:0 0 12px}
+.admin-danger-box button:disabled{opacity:.48;cursor:not-allowed}
+.proof-filter-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.proof-search{max-width:420px;margin-bottom:16px}
+.proof-table-wrap{overflow-x:auto}
+.proof-table{min-width:1100px;width:100%;table-layout:auto}
+.proof-table th{white-space:nowrap}
+.proof-table td{vertical-align:middle}
+@media(max-width:900px){.admin-layout{grid-template-columns:1fr}.admin-profile-sidebar{position:static;display:grid;grid-template-columns:56px minmax(0,1fr);gap:4px 12px;align-items:center;padding:12px}.admin-avatar{width:52px;height:52px;font-size:20px;margin:0;grid-row:1 / span 2}.admin-profile-sidebar h2{text-align:left;font-size:15px;margin:0}.admin-profile-sidebar .admin-meta{text-align:left;margin:0;font-size:10px;line-height:1.4}.admin-profile-sidebar .admin-side-actions{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}.admin-profile-sidebar button{font-size:12px;padding:8px 6px}.proof-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.proof-filter-grid{grid-template-columns:1fr}.admin-profile-sidebar{grid-template-columns:44px minmax(0,1fr);padding:10px;gap:3px 9px}.admin-avatar{width:42px;height:42px;font-size:18px}.admin-profile-sidebar h2{font-size:14px}.admin-profile-sidebar .admin-meta{font-size:10px}.admin-profile-sidebar .admin-side-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.admin-profile-sidebar button{font-size:11px;padding:8px 5px;white-space:normal;line-height:1.25}}
+.admin-settings-modal{position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.admin-settings-modal.hidden{display:none}
+.admin-settings-panel{position:relative;width:min(1050px,100%);max-height:90vh;overflow:auto;padding:28px}
+.admin-settings-panel .modal-close{position:absolute;right:16px;top:12px}
+.admin-settings-panel h2{padding-right:38px}
+.delete-confirm-modal{position:fixed;inset:0;z-index:1100;background:rgba(15,23,42,.65);display:flex;align-items:center;justify-content:center;padding:16px}
+.delete-confirm-modal.hidden{display:none}
+.delete-confirm-panel{width:min(440px,100%);background:#fff;border-radius:14px;padding:20px;box-shadow:0 18px 60px #0003}
+.delete-confirm-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:18px}
+.delete-confirm-actions button{min-width:110px}
+@media(max-width:600px){.admin-settings-modal{padding:8px}.admin-settings-panel{padding:22px 12px;max-height:94vh}.admin-settings-grid{grid-template-columns:1fr}.admin-danger-box{padding:12px}.delete-confirm-panel{padding:16px}}
+
+.reject-action{background:#facc15!important;color:#594000!important;border:1px solid #eab308!important;border-radius:7px;padding:8px 12px;font-weight:700}
+.delete-action{background:#dc2626!important;color:#fff!important;border:1px solid #b91c1c!important;border-radius:7px;padding:8px 12px;font-weight:700}
+.reject-action:hover{background:#eab308!important}
+.delete-action:hover{background:#b91c1c!important}
+.program-bsed-social-studies{background:#dbeafe!important;color:#1e40af!important;border-color:#93c5fd!important;font-size:9.5px!important;letter-spacing:.05px;padding:4px 7px!important}
+
+
+
+/* Landing page: refined dark-blue accent palette */
+body:has(.login-layout:not(.hidden)) header .logo{color:#173b70}
+body:has(.login-layout:not(.hidden)) header .logo span{color:#244f86}
+body:has(.login-layout:not(.hidden)) header .logo-subtitle{color:#315f98}
+body:has(.login-layout:not(.hidden)) .auth-intro{
+  background:linear-gradient(125deg,#123765 0%,#244f86 58%,#315f98 100%);
+}
+body:has(.login-layout:not(.hidden)) .welcome-eyebrow{color:#244f86}
+body:has(.login-layout:not(.hidden)) .welcome-dot{
+  background:#244f86;box-shadow:0 0 0 7px #244f8618;
+}
+body:has(.login-layout:not(.hidden)) .welcome-panel h1 span{color:#244f86}
+body:has(.login-layout:not(.hidden)) .welcome-feature-icon{
+  background:#e8eef8;color:#244f86;
+}
+body:has(.login-layout:not(.hidden)) .auth .primary{
+  background:#244f86;color:#fff;
+}
+body:has(.login-layout:not(.hidden)) .auth a{color:#244f86}
+body:has(.login-layout:not(.hidden)) .auth-role button.active{
+  background:#e8eef8;color:#173b70;border-color:#bfd0e8;
+}
+
+
+/* Register button: black, while keeping other primary buttons unchanged */
+#headerActions > button.primary {
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+}
+#headerActions > button.primary:hover {
+  background: #2b2b2b;
+  border-color: #2b2b2b;
+}
+
+
+/* Administrator profile dialog and profile-picture controls */
+.admin-profile-modal{position:fixed;inset:0;z-index:1200;background:rgba(15,23,42,.58);display:flex;align-items:center;justify-content:center;padding:22px;overflow-y:auto}
+.admin-profile-modal.hidden{display:none}
+.admin-profile-panel{position:relative;width:min(680px,100%);max-height:92vh;overflow-y:auto;padding:30px!important;border-radius:20px}
+.admin-profile-panel h2{margin:0 42px 6px 0;color:#172033}
+.admin-profile-photo-area{display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 0 24px}
+.admin-profile-photo,.admin-profile-photo-placeholder{width:112px;height:112px;border-radius:50%;object-fit:cover;border:4px solid #dbeafe;box-shadow:0 5px 18px rgba(15,23,42,.12)}
+.admin-profile-photo{display:none}
+.admin-profile-photo-placeholder{display:flex;align-items:center;justify-content:center;background:#102b55;color:#fff;font-size:30px;font-weight:800}
+.profile-upload-label{display:inline-flex;align-items:center;justify-content:center;padding:9px 15px;border-radius:9px;background:#102b55;color:#fff;font-weight:700;cursor:pointer}
+.profile-upload-label:hover{background:#1b3d70}
+.admin-profile-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.admin-profile-form-grid label{display:flex;flex-direction:column;gap:7px;font-size:12px;font-weight:800;color:#475569;letter-spacing:.04em}
+.admin-profile-form-grid input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #d7deea;border-radius:9px;font-size:14px;color:#172033;background:#fff}
+.admin-profile-form-grid input[readonly]{background:#f1f5f9;color:#64748b}
+.admin-profile-note{font-size:12px;margin-top:14px}
+.admin-profile-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.admin-profile-sidebar .admin-avatar{overflow:hidden}
+.admin-profile-sidebar .admin-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+@media(max-width:600px){.admin-profile-panel{padding:22px!important}.admin-profile-form-grid{grid-template-columns:1fr}.admin-profile-actions{flex-direction:column}.admin-profile-actions button{width:100%}}
+
+
+/* Live list of all administrator accounts currently signed in */
+.active-admin-card{margin-top:14px;padding:13px 10px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px}
+.active-admin-card h3{margin:0 0 12px;color:#475569;font-size:11px;font-weight:800;letter-spacing:.035em;text-align:center}
+.active-admin-list{display:grid;gap:10px}
+.active-admin-row{display:flex;align-items:center;gap:10px;min-width:0;padding:7px 6px;background:#fff;border:1px solid #edf0f4;border-radius:10px}
+.active-admin-photo-wrap{position:relative;flex:0 0 38px;width:38px;height:38px}
+.active-admin-photo{width:38px;height:38px;border-radius:50%;overflow:hidden;background:#102b55;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;border:2px solid #fff;box-shadow:0 1px 5px #0f172a20}
+.active-admin-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.active-admin-dot{position:absolute;right:-1px;bottom:0;width:10px;height:10px;border-radius:50%;background:#22c55e;border:2px solid #fff;box-shadow:0 1px 4px #0002}
+.active-admin-info{min-width:0;flex:1}
+.active-admin-name{font-size:11px;font-weight:700;color:#243047;line-height:1.3;overflow-wrap:anywhere}
+.active-admin-program{font-size:9px;color:#718096;line-height:1.3;margin-top:2px;overflow-wrap:anywhere}
+.active-admin-empty{font-size:10px;color:#8993a3;text-align:center;margin:4px 0}
+.active-admin-count{font-size:10px;color:#16a34a;font-weight:700;text-align:center;margin-top:10px}
+
+
+/* Main Admin floating pop-up panels */
+.master-floating-modal{
+ position:fixed!important;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;
+ padding:24px;background:rgba(15,23,42,.48);backdrop-filter:blur(3px);overflow-y:auto;
+}
+.master-floating-modal.hidden{display:none!important}
+.master-floating-modal>.master-floating-panel{
+ width:min(900px,100%);max-height:min(86vh,850px);overflow-y:auto;background:#fff;
+ border:1px solid #e2e8f0;border-radius:18px;padding:25px;
+ box-shadow:0 24px 80px rgba(15,23,42,.28);animation:masterPopIn .18s ease-out;
+}
+@keyframes masterPopIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.master-section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}
+.master-section-heading h2{margin-bottom:6px}
+@media(max-width:600px){.master-floating-modal{padding:12px;align-items:center}.master-floating-modal>.master-floating-panel{padding:17px;border-radius:14px;max-height:90vh}.master-section-heading{gap:8px}.master-section-heading h2{font-size:19px}.master-section-heading .secondary{padding:8px 11px;white-space:nowrap}}
+
+</style>
+</head>
+
+<body>
+<video class="site-video-bg" autoplay muted loop playsinline>
+ <source src="https://videos.pexels.com/video-files/3195394/3195394-hd_1920_1080_25fps.mp4" type="video/mp4">
+</video>
+<div class="site-video-overlay" aria-hidden="true"></div>
+<header>
+ <div class="header-brand">
+  <img class="pccm-header-logo" src="data:image/png;base64,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" alt="Polytechnic College of the City of Meycauayan logo">
+  <div class="logo"><span>SECURE MANAGEMENT SYSTEM</span><small class="logo-subtitle">Polytechnic College of the City of Meycauayan</small></div>
+ </div>
+ <div id="headerActions">
+
+ </div>
+</header>
+
+<main class="container">
+
+<!-- LOGIN -->
+<section id="loginPage" class="login-layout hidden">
+  <aside class="welcome-panel">
+   <div class="welcome-eyebrow"><span class="welcome-dot"></span> K-CARD SYSTEM</div>
+   <h1>Welcome to <span>PCCM SMS Portal</span></h1>
+   <p class="welcome-copy">Your digital space to document achievements, submit proof, and monitor your progress across the Eight K's.</p>
+   <div class="welcome-features">
+    <div class="welcome-feature">
+     <div class="welcome-feature-icon">✓</div>
+     <div><strong>Track your progress</strong><small>See your completed, pending, and remaining K achievements.</small></div>
+    </div>
+    <div class="welcome-feature">
+     <div class="welcome-feature-icon">▣</div>
+     <div><strong>Submit proof easily</strong><small>Upload evidence for each of the Eight K's.</small></div>
+    </div>
+    <div class="welcome-feature">
+     <div class="welcome-feature-icon">◎</div>
+     <div><strong>Secure monitoring</strong><small>Administrators review and verify submitted evidence.</small></div>
+    </div>
+   </div>
+  </aside>
+  <div class="auth card login-card">
+ <div class="auth-intro">
+  <div class="eyebrow"></div>
+  <h1>K-CARD PROGRAM</h1>
+  <p>Track your progress, submit your proof, and celebrate every achievement.</p>
+ </div>
+ <div class="auth-role">
+  <button type="button" id="studentRoleButton" class="active" onclick="showLogin('student')">Student Login</button>
+  <button type="button" id="adminRoleButton" onclick="showLogin('admin')">Admin Login</button>
+ </div>
+ <h2 id="loginTitle">Student Login</h2>
+ <p class="auth-subtitle" id="loginSubtitle">Sign in to view your personal K-Card checklist and progress.</p>
+ <form onsubmit="login(event)">
+  <div id="usernameField">
+   <label id="usernameLabel">STUDENT NUMBER</label>
+   <input id="username" required>
+  </div>
+  <label>PASSWORD</label>
+  <input id="password" type="password" required>
+  <button class="primary" type="submit">Sign In</button>
+ </form>
+ <p id="loginError" class="muted"></p>
+ <div class="auth-footer" id="registerLink">Student accounts are created by the Main Administrator.</div>
+  </div>
+</section>
+
+<!-- REGISTRATION -->
+<!-- STUDENT DASHBOARD -->
+<section id="studentDashboard" class="hidden">
+ <div class="student-dashboard-layout">
+  <aside class="student-profile-sidebar">
+   <img id="studentDashboardPhoto" class="profile-avatar" alt="Student profile picture">
+   <h2 id="studentGreeting">Student</h2>
+   <div class="profile-meta">
+    <div id="studentSidebarNumber">Student Number</div>
+    <div id="studentSidebarCourse">Course</div>
+    <div id="studentSidebarYearLevel">Year Level</div>
+    <div id="studentSidebarEmail">School Email</div>
+   </div>
+   <div class="profile-actions">
+    <button class="primary" type="button" onclick="openStudentProfile()">My Profile</button>
+    <button class="secondary" type="button" onclick="openPasswordChange()">Change Password</button>
+    <button class="secondary" type="button" onclick="logout()">Log Out</button>
+   </div>
+  </aside>
+  <div class="student-dashboard-main">
+   <div class="card student-dashboard-welcome">
+    <h1>Welcome to Your Dashboard</h1>
+    <p class="muted" style="margin:0">Ready for another exciting SECURE learning adventure? Track your achievements and monitor your progress across the Eight K's.</p>
+   </div>
+ <div class="stats">
+  <div class="card stat">
+   <span class="muted">Total Achievements</span>
+   <strong id="sEarned">0</strong>
+   <small>Approved K categories</small>
+  </div>
+  <div class="card stat">
+   <span class="muted">Pending Proof</span>
+   <strong id="sPending">0</strong>
+   <small>Awaiting verification</small>
+  </div>
+  <div class="card stat">
+   <span class="muted">Rejected Proof</span>
+   <strong id="sRejected">0</strong>
+   <small>Needs resubmission</small>
+  </div>
+  <div class="card stat">
+   <span class="muted">Overall Progress</span>
+   <strong id="sProgress">0%</strong>
+   <small>8K completion</small>
+  </div>
+ </div>
+
+ <div class="section">
+  <h2>My K-Card Checklist</h2>
+  <p class="muted">Submit your proof for each category and monitor its verification status.</p>
+  <div id="studentKGrid" class="grid"></div>
+ </div>
+
+ <div class="section card">
+  <h2>My Submitted Proof</h2>
+  <div class="table-wrap">
+   <table>
+    <thead>
+     <tr>
+      <th>8K Category</th>
+      <th>Description</th>
+      <th>Date Submitted</th>
+      <th>Status</th>
+      <th>Remarks</th>
+     </tr>
+    </thead>
+    <tbody id="studentProofTable"></tbody>
+   </table>
+  </div>
+ </div>
+</section>
+
+<!-- ADMIN DASHBOARD -->
+<section id="adminDashboard" class="hidden">
+ <div class="admin-layout">
+  <aside class="admin-profile-sidebar">
+   <div class="admin-avatar" id="adminProfileAvatar" role="img" aria-label="Administrator profile picture, active"></div>
+   <h2 id="adminProfileName">Administrator</h2>
+   <div class="admin-meta"><div id="adminProfileUsername">admin</div><div id="adminProfileProgram">All Programs</div><div id="adminProfileRole">Master Administrator</div></div>
+   <div class="admin-side-actions">
+    <button class="secondary" type="button" onclick="openAdminPasswordChange()">Change Password</button>
+    <button class="secondary" type="button" onclick="openAdminSettings()">Settings &amp; Data Management</button>
+    <div id="masterAdminSidebarActions" class="hidden" style="display:grid;gap:7px">
+     <button class="primary" type="button" onclick="openMasterAdminSection('administrationProgramSection')">Administration Program</button>
+     <button class="primary" type="button" onclick="openMasterAdminSection('masterAdminAccountManager')">Create Admin Account</button>
+     <button class="primary" type="button" onclick="openMasterAdminSection('masterAdminStudentCreator')">Create Student Account</button>
+    </div>
+    <button class="danger" type="button" onclick="logout()">Log Out</button>
+   </div>
+   <div class="active-admin-card" aria-label="Administrators currently signed in">
+    <h3>ACTIVE ADMINISTRATOR ACCOUNTS</h3>
+    <div id="activeAdminList" class="active-admin-list">
+     <p class="active-admin-empty">No other administrators are currently active.</p>
+    </div>
+   </div>
+  </aside>
+  <div class="admin-main">
+ <div class="card">
+  <h1>Administrator Dashboard</h1>
+  <p class="muted">Monitor students' K-Card achievements and verify uploaded proof.</p>
+ </div>
+
+ <div class="master-floating-modal hidden" id="administrationProgramSection" role="dialog" aria-modal="true" aria-labelledby="administrationProgramTitle" onclick="if(event.target===this)closeMasterAdminSections()">
+  <div class="master-floating-panel">
+   <div class="master-section-heading"><div><h2 id="administrationProgramTitle">Administration Program</h2><p class="muted">View the administrator accounts assigned to each program.</p></div><button class="secondary" type="button" onclick="closeMasterAdminSections()">Close</button></div>
+   <h3>Created Administrator Accounts</h3>
+   <div class="table-wrap"><table><thead><tr><th>Full Name</th><th>Username</th><th>Email</th><th>Program</th><th>Status</th></tr></thead><tbody id="registeredAdminAccountsTable"></tbody></table></div>
+  </div>
+ </div>
+ <div class="master-floating-modal hidden" id="masterAdminAccountManager" role="dialog" aria-modal="true" aria-labelledby="createAdminTitle" onclick="if(event.target===this)closeMasterAdminSections()">
+  <div class="master-floating-panel">
+   <div class="master-section-heading"><div><h2 id="createAdminTitle">Create Admin Account</h2><p class="muted">Only the Main Administrator can create program administrator accounts.</p></div><button class="secondary" type="button" onclick="closeMasterAdminSections()">Close</button></div>
+   <form onsubmit="registerAdmin(event)" class="admin-settings-grid">
+    <div><label>FULL NAME</label><input id="adminRegName" required></div>
+    <div><label>ADMIN USERNAME</label><input id="adminRegUsername" autocomplete="username" required></div>
+    <div><label>EMAIL</label><input id="adminRegEmail" type="email" required></div>
+    <div><label>PROGRAM ASSIGNMENT</label><select id="adminRegProgram" required><option value="">Select program</option><option>BACHELOR OF SCIENCE IN HOSPITALITY MANAGEMENT</option><option>BACHELOR OF SCIENCE IN OFFICE ADMINISTRATION</option><option>BACHELOR OF SECONDARY EDUCATION - MAJOR IN SOCIAL STUDIES</option><option>BACHELOR OF SECONDARY EDUCATION - MAJOR IN MATHEMATICS</option><option>BACHELOR OF SECONDARY EDUCATION - MAJOR IN ENGLISH</option></select></div>
+    <div><label>PASSWORD</label><input id="adminRegPassword" type="password" minlength="8" required></div>
+    <div><label>CONFIRM PASSWORD</label><input id="adminRegConfirm" type="password" minlength="8" required></div>
+    <div style="grid-column:1/-1"><p id="adminRegMessage" class="muted" role="status"></p><button class="primary" type="submit">Create Admin Account</button></div>
+   </form>
+  </div>
+ </div>
+
+ <div class="master-floating-modal hidden" id="masterAdminStudentCreator" role="dialog" aria-modal="true" aria-labelledby="createStudentTitle" onclick="if(event.target===this)closeMasterAdminSections()">
+  <div class="master-floating-panel">
+   <div class="master-section-heading"><div><h2 id="createStudentTitle">Create Student Account</h2><p class="muted">Only the Main Administrator can register student accounts.</p></div><button class="secondary" type="button" onclick="closeMasterAdminSections()">Close</button></div>
+   <form onsubmit="registerStudentByMaster(event)" class="admin-settings-grid">
+    <div><label>FULL NAME</label><input id="masterStudentName" required></div>
+    <div><label>STUDENT NUMBER</label><input id="masterStudentNumber" required></div>
+    <div><label>SCHOOL EMAIL</label><input id="masterStudentEmail" type="email" required></div>
+    <div><label>YEAR LEVEL</label><select id="masterStudentYear" required><option value="">Select year level</option><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>5th Year</option><option>Graduate Studies</option></select></div>
+    <div><label>PROGRAM</label><select id="masterStudentProgram" required><option value="">Select program</option><option>BACHELOR OF SCIENCE IN HOSPITALITY MANAGEMENT</option><option>BACHELOR OF SCIENCE IN OFFICE ADMINISTRATION</option><option>BACHELOR OF SECONDARY EDUCATION - MAJOR IN SOCIAL STUDIES</option><option>BACHELOR OF SECONDARY EDUCATION - MAJOR IN MATHEMATICS</option><option>BACHELOR OF SECONDARY EDUCATION - MAJOR IN ENGLISH</option></select></div>
+    <div><label>SECTION</label><select id="masterStudentSection" required><option value="">Select section</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+    <div><label>PASSWORD</label><input id="masterStudentPassword" type="password" minlength="8" required></div>
+    <div><label>CONFIRM PASSWORD</label><input id="masterStudentConfirm" type="password" minlength="8" required></div>
+    <div style="grid-column:1/-1"><p id="masterStudentMessage" class="muted" role="status"></p><button class="primary" type="submit">Create Student Account</button></div>
+   </form>
+  </div>
+ </div>
+
+
+ <div class="stats">
+  <div class="card stat">
+   <span class="muted">Registered Students</span>
+   <strong id="aStudents">0</strong>
+  </div>
+  <div class="card stat">
+   <span class="muted">Uploaded Proof</span>
+   <strong id="aProofs">0</strong>
+  </div>
+  <div class="card stat">
+   <span class="muted">Approved Achievements</span>
+   <strong id="aApproved">0</strong>
+  </div>
+  <div class="card stat">
+   <span class="muted">Pending Reviews</span>
+   <strong id="aPending">0</strong>
+  </div>
+ </div>
+
+ <div class="section card">
+  <h2>Registered Student Accounts</h2>
+  <p class="muted">Filter accounts by program, year level, and section. Program colors: BSHM green, BSOA yellow, BSEd blue.</p>
+  <div class="filter-grid">
+   <label>PROGRAM
+    <select id="accountProgramFilter" onchange="renderStudentAccounts()"><option value="All">All Programs</option></select>
+   </label>
+   <label>YEAR LEVEL
+    <select id="accountYearFilter" onchange="renderStudentAccounts()">
+     <option value="All">All Year Levels</option><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>5th Year</option><option>Graduate Studies</option>
+    </select>
+   </label>
+   <label>SECTION
+    <select id="accountSectionFilter" onchange="renderStudentAccounts()">
+     <option value="All">All Sections</option><option>A</option><option>B</option><option>C</option><option>D</option>
+    </select>
+   </label>
+   <label>SEARCH
+    <input id="accountSearch" placeholder="Name or student number" oninput="renderStudentAccounts()">
+   </label>
+  </div>
+  <p id="accountFilterPrompt" class="muted" style="padding:14px 16px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;margin:10px 0 14px">Student accounts are hidden by default. Select a program, year level, or section, or enter a name/student number to display matching accounts.</p>
+  <div class="table-wrap" id="registeredAccountsTableWrap" hidden>
+   <table>
+    <thead><tr><th>Student Name</th><th>Student Number</th><th>Program</th><th>Year</th><th>Section</th><th>Email</th><th>Action</th></tr></thead>
+    <tbody id="registeredAccountsTable"></tbody>
+   </table>
+  </div>
+ </div>
+
+ <div class="section card">
+  <h2>Student K-Card Monitoring</h2>
+  <p class="muted">Monitor the number of approved achievements in every category.</p>
+  <div id="adminKGrid" class="grid"></div>
+ </div>
+
+ <div class="section card">
+  <h2>Student Proof Submissions</h2>
+  <div class="proof-filter-grid">
+   <label>STATUS
+   <select id="statusFilter" onchange="renderAdmin()">
+    <option value="All">All submissions</option>
+    <option value="Pending">Pending</option>
+    <option value="Approved">Approved</option>
+    <option value="Rejected">Rejected</option>
+   </select>
+   </label>
+   <label>PROGRAM
+   <select id="programFilter" onchange="renderAdmin()"><option value="All">All Programs</option></select>
+   </label>
+   <label>YEAR
+   <select id="yearFilter" onchange="renderAdmin()"><option value="All">All Year Levels</option><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>5th Year</option><option>Graduate Studies</option></select>
+   </label>
+   <label>SECTION
+   <select id="sectionFilter" onchange="renderAdmin()"><option value="All">All Sections</option><option>A</option><option>B</option><option>C</option><option>D</option></select>
+   </label>
+   </div>
+  <label class="proof-search">SEARCH
+   <input id="studentSearch" placeholder="Search student, ID, or category..." oninput="renderAdmin()">
+  </label>
+  <div class="proof-table-wrap">
+   <table class="proof-table">
+    <thead>
+     <tr><th>Student</th><th>Student ID</th><th>Program</th><th>Year</th><th>Section</th><th>8K Category</th><th>Proof</th><th>Date</th><th>Status</th><th>Action</th></tr>
+    </thead>
+    <tbody id="adminProofTable"></tbody>
+   </table>
+  </div>
+ </div>
+ <div class="section card">
+  <h2>Program Summary</h2>
+  <div id="programSummary" class="program-summary-grid"></div>
+ </div>
+ </div><!-- admin-main -->
+ </div><!-- admin-layout -->
+
+ <div class="admin-profile-modal hidden" id="adminProfileModal" role="dialog" aria-modal="true" aria-labelledby="adminProfileModalTitle">
+  <div class="admin-profile-panel card">
+   <button class="modal-close" type="button" onclick="closeAdminProfile()" aria-label="Close admin profile">×</button>
+   <h2 id="adminProfileModalTitle">Admin Profile</h2>
+   <p class="muted">Manage your administrator information and profile picture.</p>
+   <div class="admin-profile-photo-area">
+    <img id="adminProfilePhotoPreview" class="admin-profile-photo" alt="Administrator profile picture" src="" />
+    <div class="admin-profile-photo-placeholder" id="adminProfilePhotoPlaceholder">RT</div>
+    <label class="profile-upload-label" for="adminProfilePhotoInput">Change Profile Picture</label>
+    <input id="adminProfilePhotoInput" class="hidden" type="file" accept="image/*" onchange="previewAdminProfilePhoto(event)">
+   </div>
+   <div class="admin-profile-form-grid">
+    <label>FULL NAME<input id="adminEditName" type="text" autocomplete="name"></label>
+    <label>USERNAME<input id="adminEditUsername" type="text" readonly></label>
+    <label>EMAIL ADDRESS<input id="adminEditEmail" type="email"></label>
+    <label>ASSIGNED PROGRAM<input id="adminEditProgram" type="text" readonly></label>
+    <label>ACCOUNT STATUS<input id="adminEditStatus" type="text" readonly value="Active"></label>
+   </div>
+   <p class="muted admin-profile-note">Your username, assigned program, and account status are managed by the system administrator.</p>
+   <div class="admin-profile-actions">
+    <button class="primary" type="button" onclick="saveAdminProfile()">Save Profile</button>
+    <button class="secondary" type="button" onclick="closeAdminProfile()">Cancel</button>
+   </div>
+   <p id="adminProfileMessage" class="muted" role="status"></p>
+  </div>
+ </div>
+
+ <div class="admin-settings-modal hidden" id="adminDataManagement" role="dialog" aria-modal="true" aria-labelledby="adminSettingsTitle">
+  <div class="admin-settings-panel card">
+   <button class="modal-close" type="button" onclick="closeAdminSettings()" aria-label="Close settings">×</button>
+   <h2 id="adminSettingsTitle">Settings &amp; Data Management</h2><p class="muted">Permanent deletion tools. These actions are available to all administrator accounts.</p>
+   <div class="admin-settings-grid">
+    <div class="admin-danger-box"><h3>Remove all proof attachments</h3><p>Deletes uploaded image/PDF data from every submission while keeping submission records, category, dates, and review status.</p><button class="danger" type="button" onclick="deleteAllAttachments()">Delete All Attachments</button></div>
+    <div class="admin-danger-box"><h3>Delete all student profiles</h3><p>Removes all registered student accounts and their associated proof records and attachments.</p><button class="danger" type="button" onclick="deleteAllStudents()">Delete All Student Profiles</button></div>
+    <div class="admin-danger-box"><h3>Clear all submissions</h3><p>Removes all proof submissions and attached files. Student accounts will remain.</p><button class="danger" type="button" onclick="deleteAllProofs()">Delete All Submissions</button></div>
+   </div>
+  </div>
+ </div>
+ </div><!-- admin-main -->
+ </div><!-- admin-layout -->
+ <div id="deleteConfirmModal" class="delete-confirm-modal hidden" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
+  <div class="delete-confirm-panel">
+   <h2 id="deleteConfirmTitle">Confirm permanent deletion</h2>
+   <p id="deleteConfirmMessage">This action cannot be undone.</p>
+   <div class="delete-confirm-actions"><button type="button" class="secondary" onclick="cancelDeleteConfirm()">Cancel</button><button type="button" class="danger" id="deleteConfirmProceed" onclick="proceedDeleteConfirm()">Delete permanently</button></div>
+  </div>
+ </div>
+</section>
+
+</main>
+
+
+<!-- STUDENT PROFILE MODAL -->
+<div class="modal" id="studentProfileModal">
+ <div class="modal-content profile-modal-content">
+  <button class="modal-close" type="button" onclick="closeStudentProfile()">×</button>
+  <h2>Student Profile</h2>
+  <p class="muted">View and update your personal information and profile picture.</p>
+  <form onsubmit="saveStudentProfile(event)">
+   <div class="profile-layout">
+    <div class="profile-photo">
+     <img id="profilePhotoPreview" class="profile-avatar" alt="Student profile picture">
+     <div>
+      <label for="profilePhoto">PROFILE PICTURE</label>
+      <input id="profilePhoto" type="file" accept="image/*" onchange="previewProfilePhoto(event)">
+      <p class="profile-note">Choose an image up to 1 MB.</p>
+     </div>
+    </div>
+    <div>
+     <label>FULL NAME</label>
+     <input id="profileName" required maxlength="100">
+     <label>STUDENT NUMBER</label>
+     <input id="profileNumber" required maxlength="40">
+     <label>PROGRAM</label>
+     <select id="profileCourse" required>
+      <option value="">Select program</option>
+      <option>BACHELOR OF SCIENCE IN HOSPITALITY MANAGEMENT</option>
+      <option>BACHELOR OF SCIENCE IN OFFICE ADMINISTRATION</option>
+      <option>BACHELOR OF SECONDARY EDUCATION - MAJOR IN SOCIAL STUDIES</option>
+      <option>BACHELOR OF SECONDARY EDUCATION - MAJOR IN MATHEMATICS</option>
+      <option>BACHELOR OF SECONDARY EDUCATION - MAJOR IN ENGLISH</option>
+     </select>
+     <label>YEAR LEVEL</label>
+     <select id="profileYearLevel" required>
+      <option value="">Select year level</option>
+      <option>1st Year</option><option>2nd Year</option><option>3rd Year</option>
+      <option>4th Year</option><option>5th Year</option><option>Graduate Studies</option>
+     </select>
+     <label>SECTION</label>
+     <select id="profileSection" required><option value="">Select section</option><option>A</option><option>B</option><option>C</option><option>D</option></select>
+     <label>SCHOOL EMAIL</label>
+     <input id="profileEmail" type="email" required maxlength="150">
+    </div>
+   </div>
+   <p id="profileMessage" class="muted" role="status"></p>
+   <button class="primary" type="submit">Save Profile</button>
+   <button class="secondary" type="button" onclick="closeStudentProfile()">Cancel</button>
+  </form>
+ </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal" id="passwordChangeModal">
+ <div class="modal-content">
+  <button class="modal-close" type="button" onclick="closePasswordChange()">×</button>
+  <h2>Change Password</h2>
+  <p class="muted">Enter your current password before choosing a new one.</p>
+  <form onsubmit="changeStudentPassword(event)">
+   <label>CURRENT PASSWORD</label>
+   <input id="currentStudentPassword" type="password" autocomplete="current-password" required>
+   <label>NEW PASSWORD</label>
+   <input id="newStudentPassword" type="password" minlength="8" autocomplete="new-password" required>
+   <label>CONFIRM NEW PASSWORD</label>
+   <input id="confirmStudentPassword" type="password" minlength="8" autocomplete="new-password" required>
+   <p class="profile-note">Your new password must contain at least 8 characters.</p>
+   <p id="passwordChangeMessage" class="muted" role="status"></p>
+   <button class="primary" type="submit">Update Password</button>
+   <button class="secondary" type="button" onclick="closePasswordChange()">Cancel</button>
+  </form>
+ </div>
+</div>
+
+<!-- PROOF SUBMISSION MODAL -->
+<div class="modal" id="proofModal">
+ <div class="modal-content">
+  <button class="modal-close" onclick="closeProof()">×</button>
+  <h2 id="proofTitle">Submit 8K Proof</h2>
+  <p class="muted">Upload your evidence for administrator verification.</p>
+  <form onsubmit="submitProof(event)">
+   <label>ACTIVITY DESCRIPTION</label>
+   <input id="proofDescription" required placeholder="Describe your accomplishment">
+   <label>UPLOAD PROOF (IMAGE OR PDF)</label>
+   <input id="proofFile" type="file" accept="image/*,.pdf" required>
+   <p class="notice">Only submit authentic proof of your accomplishment.</p>
+   <button class="primary">Submit Proof</button>
+  </form>
+  <p id="proofMessage" class="muted"></p>
+ </div>
+</div>
+
+<script>
+// The Eight K's follow the categories and visual theme in the K-CARD reference.
+const K_CATEGORIES=[
+ "KARAKTER",
+ "KALINISAN AT KAYAYUSAN",
+ "KAALAMAN",
+ "KALINANGAN",
+ "KAAGAPAY",
+ "KALAKASAN",
+ "KABUHAYAN",
+ "KALUNTIAN"
+];
+
+const K_ICONS=["🫶","🧹","📚","⚙️","🤝","🏃","💰","🌱"];
+const COLORS=[
+ "#E85D83", "#24A35A", "#377EE8", "#9147D5",
+ "#E98228", "#159C9A", "#D5A322", "#399447"
+];
+const LIGHT_COLORS=[
+ "#FCE8ED", "#E5F4EA", "#E7EEFF", "#F0E7FF",
+ "#FFF0DF", "#E1F5F4", "#FFF5D9", "#E7F4E5"
+];
+const PROGRAMS=[
+ "BACHELOR OF SCIENCE IN HOSPITALITY MANAGEMENT",
+ "BACHELOR OF SCIENCE IN OFFICE ADMINISTRATION",
+ "BACHELOR OF SECONDARY EDUCATION - MAJOR IN SOCIAL STUDIES",
+ "BACHELOR OF SECONDARY EDUCATION - MAJOR IN MATHEMATICS",
+ "BACHELOR OF SECONDARY EDUCATION - MAJOR IN ENGLISH"
+];
+function programClass(p){p=String(p||"").toUpperCase();return p.includes("HOSPITALITY")?"program-hm":p.includes("OFFICE ADMINISTRATION")?"program-oa":"program-bsed";}
+function programColor(p){p=String(p||"").toUpperCase();return p.includes("HOSPITALITY")?"#218447":p.includes("OFFICE ADMINISTRATION")?"#c49a00":"#2868c7";}
+function accountForProof(p){return accounts.find(a=>a.id===p.studentId)||{};}
+function proofDetails(p){const a=accountForProof(p);return {program:p.program||a.course||"Unspecified",yearLevel:p.yearLevel||a.yearLevel||"Unspecified",section:p.section||a.section||"Unspecified"};}
+
+let accounts=JSON.parse(localStorage.getItem("kcard_accounts")||"[]");
+let adminAccounts=JSON.parse(localStorage.getItem("kcard_admin_accounts")||"[]");
+let proofs=JSON.parse(localStorage.getItem("kcard_proofs")||"[]");
+
+let currentUser=null;
+let loginRole="student";
+let selectedK=null;
+
+/*
+ * Presence is shared between tabs/browsers using the same website origin
+ * through localStorage. A server-backed database/realtime service is needed
+ * to share presence between different devices.
+ */
+const ADMIN_PRESENCE_KEY="kcard_active_admin_sessions";
+const ADMIN_PRESENCE_SESSION=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random());
+const ADMIN_PRESENCE_STALE_MS=90000;
+
+function readAdminPresence(){
+ try{
+  const value=JSON.parse(localStorage.getItem(ADMIN_PRESENCE_KEY)||"[]");
+  return Array.isArray(value)?value:[];
+ }catch(e){return [];}
+}
+function writeAdminPresence(list){
+ try{localStorage.setItem(ADMIN_PRESENCE_KEY,JSON.stringify(list));}catch(e){}
+}
+function currentAdminPresenceRecord(){
+ if(!currentUser||currentUser.role!=="admin")return null;
+ const profile=getAdminProfileData();
+ return {
+  sessionId:ADMIN_PRESENCE_SESSION,
+  accountId:currentUser.isMaster?"master-admin":String(currentUser.id||currentUser.username),
+  name:profile.name||currentUser.name||"Administrator",
+  username:profile.username||currentUser.username||"admin",
+  program:profile.program||currentUser.program||"Program Administrator",
+  photo:profile.photo||"",
+  lastSeen:Date.now()
+ };
+}
+function registerAdminPresence(){
+ const record=currentAdminPresenceRecord();if(!record)return;
+ const list=readAdminPresence().filter(x=>x.sessionId!==ADMIN_PRESENCE_SESSION&&Date.now()-Number(x.lastSeen||0)<ADMIN_PRESENCE_STALE_MS);
+ list.push(record);writeAdminPresence(list);refreshActiveAdminList();
+}
+function removeAdminPresence(){
+ const list=readAdminPresence().filter(x=>x.sessionId!==ADMIN_PRESENCE_SESSION);
+ writeAdminPresence(list);refreshActiveAdminList();
+}
+function refreshAdminPresence(){
+ if(currentUser&&currentUser.role==="admin")registerAdminPresence();
+ else refreshActiveAdminList();
+}
+function refreshActiveAdminList(){
+ const host=document.getElementById("activeAdminList");if(!host)return;
+ const now=Date.now();
+ const sessions=readAdminPresence().filter(x=>now-Number(x.lastSeen||0)<ADMIN_PRESENCE_STALE_MS);
+ if(sessions.length!==readAdminPresence().length)writeAdminPresence(sessions);
+ // Show one row per account, even if the same administrator has multiple tabs open.
+ const unique=new Map();
+ sessions.forEach(item=>{
+  const key=String(item.accountId||item.username||item.sessionId);
+  const previous=unique.get(key);
+  if(!previous||Number(item.lastSeen)>Number(previous.lastSeen))unique.set(key,item);
+ });
+ const active=[...unique.values()].sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+ if(!active.length){
+  host.innerHTML='<p class="active-admin-empty">No administrators are currently active.</p>';
+  return;
+ }
+ host.innerHTML=active.map(item=>{
+  const initials=(item.name||"Admin").trim().split(/\\s+/).map(part=>part[0]).join("").slice(0,2).toUpperCase();
+  const picture=item.photo?`<img src="${item.photo}" alt="">`:escapeHTML(initials);
+  return `<div class="active-admin-row">
+   <div class="active-admin-photo-wrap"><div class="active-admin-photo">${picture}</div><span class="active-admin-dot" title="Active"></span></div>
+   <div class="active-admin-info"><div class="active-admin-name">${escapeHTML(item.name||"Administrator")}</div></div>
+  </div>`;
+ }).join("");
+}
+window.addEventListener("storage",event=>{
+ if(event.key===ADMIN_PRESENCE_KEY)refreshActiveAdminList();
+});
+window.addEventListener("beforeunload",()=>{
+ if(currentUser&&currentUser.role==="admin")removeAdminPresence();
+});
+setInterval(()=>{
+ if(currentUser&&currentUser.role==="admin")registerAdminPresence();
+ else refreshActiveAdminList();
+},20000);
+
+
+// Demo only. Change before testing and never deploy this
+// client-side administrator password for real school use.
+const ADMIN_USER="admin";
+let ADMIN_PASS=localStorage.getItem("kcard_master_password")||"Admin@12345";
+
+function save(){
+ localStorage.setItem("kcard_accounts",JSON.stringify(accounts));
+ localStorage.setItem("kcard_admin_accounts",JSON.stringify(adminAccounts));
+ localStorage.setItem("kcard_proofs",JSON.stringify(proofs));
+}
+
+function hideAll(){
+ ["loginPage","studentDashboard","adminDashboard"]
+ .forEach(id=>document.getElementById(id).classList.add("hidden"));
+}
+
+function showHome(){
+ showLogin("student");
+}
+
+function showLogin(role){
+ // Display the selected login screen and clear any previous session/form values.
+ currentUser=null;
+ document.getElementById("username").value="";
+ document.getElementById("password").value="";
+ loginRole=role;
+ hideAll();
+ document.getElementById("loginPage").classList.remove("hidden");
+ document.getElementById("loginTitle").textContent=
+ role==="admin"?"Administrator Login":"Student Login";
+ document.getElementById("loginSubtitle").textContent=role==="admin"?
+ "Authorized administrators can monitor student K-Card achievements and review submitted proof.":
+ "Sign in to view your personal K-Card checklist, upload proof, and track your progress.";
+ document.getElementById("studentRoleButton").classList.toggle("active",role==="student");
+ document.getElementById("adminRoleButton").classList.toggle("active",role==="admin");
+ document.getElementById("usernameLabel").textContent=
+ role==="admin"?"ADMIN USERNAME":"STUDENT NUMBER";
+ document.getElementById("registerLink").classList.toggle("hidden",role==="admin");
+ document.getElementById("loginError").textContent="";
+}
+
+function showRegister(){
+ // Public registration is disabled. Student accounts are created by the Main Administrator.
+ showHome();
+}
+
+function openMasterAdminSection(sectionId){
+ if(!currentUser||currentUser.role!=="admin"||currentUser.isMaster!==true)return;
+ ["administrationProgramSection","masterAdminAccountManager","masterAdminStudentCreator"].forEach(id=>{
+  const el=document.getElementById(id);if(el)el.classList.toggle("hidden",id!==sectionId);
+ });
+ if(sectionId==="administrationProgramSection")renderAdminAccounts();
+}
+function closeMasterAdminSections(){
+ ["administrationProgramSection","masterAdminAccountManager","masterAdminStudentCreator"].forEach(id=>document.getElementById(id)?.classList.add("hidden"));
+}
+
+async function registerAdmin(e){
+ e.preventDefault();
+ const msg=document.getElementById("adminRegMessage");
+ if(!currentUser || currentUser.role!=="admin" || currentUser.isMaster!==true){
+  if(msg)msg.textContent="Only the Main Administrator can create administrator accounts.";
+  return;
+ }
+ const name=document.getElementById("adminRegName").value.trim();
+ const username=document.getElementById("adminRegUsername").value.trim();
+ const email=document.getElementById("adminRegEmail").value.trim().toLowerCase();
+ const program=document.getElementById("adminRegProgram").value;
+ const pass=document.getElementById("adminRegPassword").value;
+ const confirm=document.getElementById("adminRegConfirm").value;
+ if(pass!==confirm){msg.textContent="Passwords do not match.";return;}
+ if(adminAccounts.some(a=>a.username.toLowerCase()===username.toLowerCase()||a.email===email)||
+    (username.toLowerCase()===ADMIN_USER.toLowerCase())){msg.textContent="Username or email is already registered.";return;}
+ try{
+  adminAccounts.push({id:crypto.randomUUID(),name,username,email,program,password:await hashPassword(pass),status:"Active",createdAt:new Date().toISOString()});
+  save();msg.textContent="Administrator account created successfully.";e.target.reset();renderAdminAccounts();
+ }catch(err){msg.textContent=err.message;}
+}
+
+function renderAdminAccounts(){
+ const tools=document.getElementById("masterAdminTools");
+ if(tools)tools.classList.toggle("hidden",!(currentUser && currentUser.isMaster===true));
+ const sideActions=document.getElementById("masterAdminSidebarActions");
+ if(sideActions)sideActions.classList.toggle("hidden",!(currentUser && currentUser.role==="admin" && currentUser.isMaster===true));
+ const tbody=document.getElementById("registeredAdminAccountsTable");if(!tbody || !currentUser || currentUser.isMaster!==true)return;
+ tbody.innerHTML=adminAccounts.slice().sort((a,b)=>(a.program||"").localeCompare(b.program||"")).map(a=>{
+  const color=programColor(a.program),cls=programClass(a.program);
+  return `<tr style="background:${color}12;border-left:4px solid ${color}"><td>${escapeHTML(a.name||"")}</td><td>${escapeHTML(a.username||"")}</td><td>${escapeHTML(a.email||"")}</td><td><span class="program-tag ${cls}">${escapeHTML(a.program||"")}</span></td><td>${escapeHTML(a.status||"Active")}</td></tr>`;
+ }).join("")||'<tr><td colspan="5">No program administrator accounts registered yet.</td></tr>';
+}
+
+async function registerStudentByMaster(e){
+ e.preventDefault();
+ const msg=document.getElementById("masterStudentMessage");
+ if(!currentUser||currentUser.role!=="admin"||currentUser.isMaster!==true){msg.textContent="Only the Main Administrator can create student accounts.";return;}
+ const name=document.getElementById("masterStudentName").value.trim();
+ const number=document.getElementById("masterStudentNumber").value.trim();
+ const email=document.getElementById("masterStudentEmail").value.trim().toLowerCase();
+ const yearLevel=document.getElementById("masterStudentYear").value;
+ const course=document.getElementById("masterStudentProgram").value;
+ const section=document.getElementById("masterStudentSection").value;
+ const pass=document.getElementById("masterStudentPassword").value;
+ const confirm=document.getElementById("masterStudentConfirm").value;
+ if(pass!==confirm){msg.textContent="Passwords do not match.";return;}
+ if(accounts.some(a=>String(a.number).toLowerCase()===number.toLowerCase()||String(a.email).toLowerCase()===email)){msg.textContent="Student number or email is already registered.";return;}
+ try{accounts.push({id:crypto.randomUUID(),name,number,email,yearLevel,course,section,password:await hashPassword(pass)});save();e.target.reset();msg.textContent="Student account created successfully.";}
+ catch(err){msg.textContent=err.message;}
+}
+
+async function hashPassword(value){
+ if(!crypto.subtle)throw Error("Please open this website using HTTPS or localhost.");
+ const data=new TextEncoder().encode(value);
+ const hash=await crypto.subtle.digest("SHA-256",data);
+ return [...new Uint8Array(hash)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+
+async function register(e){
+ e.preventDefault();
+ const name=document.getElementById("regName").value.trim();
+ const number=document.getElementById("regNumber").value.trim();
+ const email=document.getElementById("regEmail").value.trim().toLowerCase();
+ const yearLevel=document.getElementById("regYearLevel").value;
+ const course=document.getElementById("regCourse").value;
+  const section=document.getElementById("regSection").value;
+ const pass=document.getElementById("regPassword").value;
+ const confirm=document.getElementById("regConfirm").value;
+ const msg=document.getElementById("regMessage");
+
+ if(pass!==confirm){msg.textContent="Passwords do not match.";return}
+ if(accounts.some(a=>a.number.toLowerCase()===number.toLowerCase()||a.email===email)){
+  msg.textContent="Student number or email already registered.";return;
+ }
+
+ try{
+  accounts.push({
+   id:crypto.randomUUID(),
+   name,number,email,yearLevel,course,section,
+   password:await hashPassword(pass)
+  });
+  save();
+  msg.textContent="Account created! You can now log in.";
+  e.target.reset();
+ }catch(err){msg.textContent=err.message}
+}
+
+async function login(e){
+ e.preventDefault();
+ const username=document.getElementById("username").value.trim();
+ const pass=document.getElementById("password").value;
+ const error=document.getElementById("loginError");
+
+ if(loginRole==="admin"){
+  if(username===ADMIN_USER&&pass===ADMIN_PASS){
+   currentUser={role:"admin",name:"Administrator",program:"All Programs",isMaster:true};
+   showAdmin();return;
+  }
+  const admin=adminAccounts.find(a=>a.username.toLowerCase()===username.toLowerCase());
+  if(!admin){error.textContent="Administrator account not found.";return;}
+  try{
+   if(admin.password!==await hashPassword(pass)){error.textContent="Incorrect password.";return;}
+   if(admin.status!=="Active"){error.textContent="This administrator account is inactive.";return;}
+   currentUser={...admin,role:"admin"};showAdmin();
+  }catch(err){error.textContent=err.message;}
+  return;
+ }
+
+ const account=accounts.find(a=>a.number.toLowerCase()===username.toLowerCase());
+ if(!account){error.textContent="Student account not found.";return}
+
+ try{
+  if(account.password!==await hashPassword(pass)){
+   error.textContent="Incorrect password.";return;
+  }
+  currentUser={...account,role:"student"};
+  showStudent();
+ }catch(err){error.textContent=err.message}
+}
+
+function logout(){
+ // End the administrator's active-presence session before clearing the login.
+ if(currentUser && currentUser.role==="admin") removeAdminPresence();
+ currentUser=null;
+ selectedK=null;
+ document.getElementById("proofModal").classList.remove("show");
+
+ const loginForm=document.querySelector("#loginPage form");
+ if(loginForm) loginForm.reset();
+
+ document.getElementById("loginError").textContent="";
+ showLogin("student");
+}
+
+
+const DEFAULT_PROFILE_PHOTO = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
+ '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><rect width="120" height="120" rx="60" fill="#e5f4ed"/><circle cx="60" cy="43" r="22" fill="#16875c"/><path d="M20 112c3-25 18-38 40-38s37 13 40 38" fill="#16875c"/></svg>'
+);
+
+function openStudentProfile(){
+ if(!currentUser || currentUser.role!=="student")return;
+ document.getElementById("profileName").value=currentUser.name||"";
+ document.getElementById("profileNumber").value=currentUser.number||"";
+ document.getElementById("profileEmail").value=currentUser.email||"";
+ document.getElementById("profileYearLevel").value=currentUser.yearLevel||"";
+ document.getElementById("profileCourse").value=currentUser.course||"";
+ document.getElementById("profileSection").value=currentUser.section||"";
+ document.getElementById("profilePhoto").value="";
+ document.getElementById("profilePhotoPreview").src=currentUser.photo||DEFAULT_PROFILE_PHOTO;
+ document.getElementById("profileMessage").textContent="";
+ document.getElementById("studentProfileModal").classList.add("show");
+}
+function closeStudentProfile(){
+ document.getElementById("studentProfileModal").classList.remove("show");
+}
+function previewProfilePhoto(event){
+ const file=event.target.files[0];
+ const message=document.getElementById("profileMessage");
+ if(!file)return;
+ if(!file.type.startsWith("image/")){message.textContent="Please choose a valid image file.";event.target.value="";return;}
+ if(file.size>1024*1024){message.textContent="Please choose an image smaller than 1 MB.";event.target.value="";return;}
+ const reader=new FileReader();
+ reader.onload=()=>{document.getElementById("profilePhotoPreview").src=reader.result;};
+ reader.readAsDataURL(file);
+}
+function saveStudentProfile(event){
+ event.preventDefault();
+ if(!currentUser || currentUser.role!=="student")return;
+ const name=document.getElementById("profileName").value.trim();
+ const number=document.getElementById("profileNumber").value.trim();
+ const email=document.getElementById("profileEmail").value.trim().toLowerCase();
+ const yearLevel=document.getElementById("profileYearLevel").value;
+ const course=document.getElementById("profileCourse").value;
+  const section=document.getElementById("profileSection").value;
+ const message=document.getElementById("profileMessage");
+ const account=accounts.find(a=>a.id===currentUser.id);
+ if(!account){message.textContent="Student account could not be found.";return;}
+ const duplicate=accounts.some(a=>a.id!==account.id &&
+  (a.number.toLowerCase()===number.toLowerCase() || a.email.toLowerCase()===email));
+ if(duplicate){message.textContent="That student number or email is already used by another account.";return;}
+ const photo=document.getElementById("profilePhotoPreview").src;
+ account.name=name; account.number=number; account.email=email;
+ account.yearLevel=yearLevel; account.section=section; account.course=course;
+ if(photo && photo!==DEFAULT_PROFILE_PHOTO)account.photo=photo;
+ proofs.forEach(p=>{if(p.studentId===account.id){p.studentName=name;p.studentNumber=number;}});
+ currentUser={...account,role:"student"};
+ save();
+ document.getElementById("studentGreeting").textContent=name;
+ document.getElementById("studentDashboardPhoto").src=currentUser.photo||DEFAULT_PROFILE_PHOTO;
+ document.getElementById("studentSidebarNumber").textContent=number;
+ document.getElementById("studentSidebarEmail").textContent=email;
+ document.getElementById("studentSidebarYearLevel").textContent=yearLevel;
+ document.getElementById("studentSidebarCourse").textContent=course;
+ renderStudent();
+ message.textContent="Your profile has been updated successfully.";
+ document.getElementById("profilePhoto").value="";
+}
+function openPasswordChange(){
+ if(!currentUser || currentUser.role!=="student")return;
+ document.getElementById("passwordChangeMessage").textContent="";
+ document.getElementById("currentStudentPassword").value="";
+ document.getElementById("newStudentPassword").value="";
+ document.getElementById("confirmStudentPassword").value="";
+ document.getElementById("passwordChangeModal").classList.add("show");
+}
+function closePasswordChange(){
+ document.getElementById("passwordChangeModal").classList.remove("show");
+}
+async function changeStudentPassword(event){
+ event.preventDefault();
+ if(!currentUser || currentUser.role!=="student")return;
+ const message=document.getElementById("passwordChangeMessage");
+ const current=document.getElementById("currentStudentPassword").value;
+ const next=document.getElementById("newStudentPassword").value;
+ const confirm=document.getElementById("confirmStudentPassword").value;
+ const account=accounts.find(a=>a.id===currentUser.id);
+ if(!account){message.textContent="Student account could not be found.";return;}
+ if(next.length<8){message.textContent="The new password must contain at least 8 characters.";return;}
+ if(next!==confirm){message.textContent="The new passwords do not match.";return;}
+ try{
+  if(account.password!==await hashPassword(current)){message.textContent="Your current password is incorrect.";return;}
+  if(current===next){message.textContent="Please choose a password different from your current password.";return;}
+  account.password=await hashPassword(next);
+  currentUser={...account,role:"student"};
+  save();
+  message.textContent="Password updated successfully.";
+  event.target.reset();
+ }catch(err){message.textContent=err.message;}
+}
+
+function getMyProofs(){
+ return proofs.filter(p=>p.studentId===currentUser.id);
+}
+
+function approvedK(studentId,k){
+ return proofs.some(p=>p.studentId===studentId&&p.category===k&&p.status==="Approved");
+}
+
+function statusFor(k){
+ const mine=getMyProofs().filter(p=>p.category===k);
+ if(mine.some(p=>p.status==="Approved"))return "Approved";
+ if(mine.some(p=>p.status==="Pending"))return "Pending";
+ if(mine.length)return "Rejected";
+ return "Not Submitted";
+}
+
+function showStudent(){
+ hideAll();
+ document.getElementById("studentDashboard").classList.remove("hidden");
+ document.getElementById("studentGreeting").textContent=currentUser.name;
+ document.getElementById("studentDashboardPhoto").src=currentUser.photo||DEFAULT_PROFILE_PHOTO;
+ document.getElementById("studentSidebarNumber").textContent=currentUser.number||"";
+ document.getElementById("studentSidebarEmail").textContent=currentUser.email||"";
+ document.getElementById("studentSidebarYearLevel").textContent=currentUser.yearLevel||"Not set";
+ document.getElementById("studentSidebarCourse").textContent=currentUser.course||"Not set";
+ renderStudent();
+}
+
+function renderStudent(){
+ const mine=getMyProofs();
+ const earned=K_CATEGORIES.filter(k=>approvedK(currentUser.id,k)).length;
+ const pending=mine.filter(p=>p.status==="Pending").length;
+ const rejected=mine.filter(p=>p.status==="Rejected").length;
+
+ document.getElementById("sEarned").textContent=earned+"/8";
+ document.getElementById("sPending").textContent=pending;
+ document.getElementById("sRejected").textContent=rejected;
+ document.getElementById("sProgress").textContent=Math.round(earned/8*100)+"%";
+
+ document.getElementById("studentKGrid").innerHTML=
+ K_CATEGORIES.map((k,i)=>{
+  const status=statusFor(k);
+  const done=status==="Approved";
+  const color=COLORS[i];
+  return `<div class="k-card" style="border-top:4px solid ${color}">
+   <div class="k-icon" style="background:${LIGHT_COLORS[i]};color:${color};font-size:27px">${K_ICONS[i]}</div>
+   <h3>${k}</h3>
+   <span class="status ${done?"approved":status==="Pending"?"pending":status==="Rejected"?"rejected":""}">${status}</span>
+   <div class="progress"><span style="width:${done?100:0}%"></span></div>
+   <button class="primary" onclick="openProof(${i})">${status==="Rejected"?"Resubmit Proof":"Submit Proof"}</button>
+  </div>`;
+ }).join("");
+
+ document.getElementById("studentProofTable").innerHTML=
+ mine.slice().reverse().map(p=>`
+ <tr>
+ <td>${escapeHTML(p.category)}</td>
+ <td>${escapeHTML(p.description)}</td>
+ <td>${new Date(p.date).toLocaleDateString()}</td>
+ <td><span class="status ${p.status.toLowerCase()}">${p.status}</span></td>
+ <td>${escapeHTML(p.remarks||"—")}</td>
+ </tr>`).join("")||'<tr><td colspan="5">No proof submitted yet.</td></tr>';
+}
+
+function openProof(index){
+ if(statusFor(K_CATEGORIES[index])==="Approved")return;
+ selectedK=K_CATEGORIES[index];
+ document.getElementById("proofTitle").textContent="Submit proof: "+selectedK;
+ document.getElementById("proofModal").classList.add("show");
+ document.getElementById("proofMessage").textContent="";
+ document.getElementById("proofFile").value="";
+ document.getElementById("proofDescription").value="";
+}
+
+function closeProof(){
+ document.getElementById("proofModal").classList.remove("show");
+}
+
+function submitProof(e){
+ e.preventDefault();
+ const file=document.getElementById("proofFile").files[0];
+ const description=document.getElementById("proofDescription").value.trim();
+
+ if(!file)return;
+ if(file.size>1024*1024){
+  alert("Please upload a file smaller than 1 MB.");
+  return;
+ }
+ if(proofs.some(p=>p.studentId===currentUser.id&&p.category===selectedK&&p.status==="Approved")){
+  alert("This K achievement has already been approved.");
+  return;
+ }
+
+ const reader=new FileReader();
+ reader.onload=()=>{
+  proofs.push({
+   id:crypto.randomUUID(),
+   studentId:currentUser.id,
+   studentName:currentUser.name,
+   studentNumber:currentUser.number,
+   category:selectedK,
+   description,
+   fileName:file.name,
+   fileData:reader.result,
+   fileType:file.type,
+   date:Date.now(),
+   status:"Pending",
+   remarks:""
+  });
+  save();
+  closeProof();
+  renderStudent();
+ };
+ reader.readAsDataURL(file);
+}
+
+function renderStudentAccounts(){
+ const program=document.getElementById("accountProgramFilter").value;
+ const year=document.getElementById("accountYearFilter").value;
+ const section=document.getElementById("accountSectionFilter").value;
+ const search=document.getElementById("accountSearch").value.trim().toLowerCase();
+ const filteredByUser=program!=="All"||year!=="All"||section!=="All"||search.length>0;
+ const tableWrap=document.getElementById("registeredAccountsTableWrap");
+ const prompt=document.getElementById("accountFilterPrompt");
+ const tbody=document.getElementById("registeredAccountsTable");
+ // Do not reveal the full student directory until the administrator applies a filter.
+ if(!filteredByUser){
+  if(tableWrap)tableWrap.hidden=true;
+  if(prompt){prompt.hidden=false;prompt.textContent="Student accounts are hidden by default. Select a program, year level, or section, or enter a name/student number to display matching accounts.";}
+  if(tbody)tbody.innerHTML="";
+  return;
+ }
+ if(tableWrap)tableWrap.hidden=false;
+ if(prompt)prompt.hidden=true;
+ const list=accounts.filter(a=>(program==="All"||a.course===program)&&
+  (year==="All"||a.yearLevel===year)&&(section==="All"||a.section===section)&&
+  ((a.name||"").toLowerCase().includes(search)||(a.number||"").toLowerCase().includes(search)));
+ tbody.innerHTML=list.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||"")).map(a=>{
+  const cls=programClass(a.course)+(a.course==="BACHELOR OF SECONDARY EDUCATION - MAJOR IN SOCIAL STUDIES"?" program-bsed-social-studies":"");const color=programColor(a.course);
+  return `<tr style="background:${color}12;border-left:4px solid ${color}">
+   <td>${escapeHTML(a.name||"")}</td><td>${escapeHTML(a.number||"")}</td>
+   <td><span class="program-tag ${cls}">${escapeHTML(a.course||"Unspecified Program")}</span></td>
+   <td>${escapeHTML(a.yearLevel||"—")}</td><td>${escapeHTML(a.section||"—")}</td><td>${escapeHTML(a.email||"")}</td><td><button class="delete-action" type="button" onclick="deleteStudentAccount('${a.id}')">Delete</button></td>
+  </tr>`;
+ }).join("")||'<tr><td colspan="7">No registered accounts match these filters.</td></tr>';
+}
+
+function showAdmin(){
+ hideAll();
+ document.getElementById("adminDashboard").classList.remove("hidden");
+ const tools=document.getElementById("masterAdminTools");
+ if(tools)tools.classList.toggle("hidden",!(currentUser && currentUser.isMaster===true));
+ const sideActions=document.getElementById("masterAdminSidebarActions");
+ if(sideActions)sideActions.classList.toggle("hidden",!(currentUser && currentUser.role==="admin" && currentUser.isMaster===true));
+ closeMasterAdminSections();
+ const pf=document.getElementById("programFilter");
+ if(pf && pf.options.length===1)PROGRAMS.forEach(p=>{const o=document.createElement("option");o.value=p;o.textContent=p;pf.appendChild(o);});
+ const apf=document.getElementById("accountProgramFilter");
+ if(apf && apf.options.length===1)PROGRAMS.forEach(p=>{const o=document.createElement("option");o.value=p;o.textContent=p;apf.appendChild(o);});
+ renderStudentAccounts();
+ renderAdminAccounts();
+ renderAdminProfile();
+ registerAdminPresence();
+ refreshActiveAdminList();
+ renderAdmin();
+}
+
+function openAdminSettings(){
+ if(!currentUser||currentUser.role!=="admin")return;
+ const settings=document.getElementById("adminDataManagement");if(!settings)return;
+ settings.classList.remove("hidden");
+ document.querySelectorAll("#adminDataManagement .admin-danger-box button").forEach(b=>b.disabled=false);
+}
+function closeAdminSettings(){
+ const settings=document.getElementById("adminDataManagement");if(settings)settings.classList.add("hidden");
+ cancelDeleteConfirm();
+}
+
+function getAdminProfileData(){
+ const masterDefaults={name:"Rian Tolomia",username:"RT2529",email:"rianrodrigueztolomia2529@gmail.com",program:"BACHELOR OF SCIENCE IN HOSPITALITY MANAGEMENT",status:"Active",photo:""};
+ if(currentUser?.isMaster){
+  const saved=JSON.parse(localStorage.getItem("kcard_master_admin_profile")||"{}");
+  return {...masterDefaults,...saved};
+ }
+ const account=adminAccounts.find(a=>a.id===currentUser?.id)||currentUser||{};
+ return {name:account.name||"Administrator",username:account.username||"",email:account.email||"",program:account.program||"",status:account.status||"Active",photo:account.photo||""};
+}
+function renderAdminProfile(){
+ const data=getAdminProfileData();
+ const isMaster=!!currentUser?.isMaster;
+ document.getElementById("adminProfileName").textContent=isMaster?"Master Account":data.name;
+ const meta=document.querySelector(".admin-profile-sidebar .admin-meta");
+ if(meta) meta.classList.toggle("hidden",isMaster);
+ document.getElementById("adminProfileUsername").textContent="@"+data.username;
+ document.getElementById("adminProfileProgram").textContent=data.program;
+ document.getElementById("adminProfileRole").textContent="Program Administrator";
+ const avatar=document.getElementById("adminProfileAvatar");
+ avatar.innerHTML=data.photo?`<img src="${data.photo}" alt="Admin profile picture">`:escapeHTML((data.name.trim()[0]||"A").toUpperCase());
+ refreshActiveAdminList();
+ document.querySelectorAll("#adminDataManagement .admin-danger-box button").forEach(b=>b.disabled=!currentUser||currentUser.role!=="admin");
+}
+function openAdminProfile(){
+ if(!currentUser||currentUser.role!=="admin")return;
+ const data=getAdminProfileData();
+ document.getElementById("adminEditName").value=data.name;
+ document.getElementById("adminEditUsername").value=data.username;
+ document.getElementById("adminEditEmail").value=data.email;
+ document.getElementById("adminEditProgram").value=data.program;
+ document.getElementById("adminEditStatus").value=data.status;
+ document.getElementById("adminProfileMessage").textContent="";
+ const preview=document.getElementById("adminProfilePhotoPreview");
+ const placeholder=document.getElementById("adminProfilePhotoPlaceholder");
+ if(data.photo){preview.src=data.photo;preview.style.display="block";placeholder.style.display="none";}
+ else{preview.removeAttribute("src");preview.style.display="none";placeholder.textContent=(data.name.trim().split(/\s+/).map(x=>x[0]).join("").slice(0,2)||"A").toUpperCase();placeholder.style.display="flex";}
+ document.getElementById("adminProfilePhotoInput").value="";
+ document.getElementById("adminProfileModal").classList.remove("hidden");
+}
+function closeAdminProfile(){document.getElementById("adminProfileModal").classList.add("hidden");}
+function previewAdminProfilePhoto(event){
+ const file=event.target.files?.[0];if(!file)return;
+ if(!file.type.startsWith("image/")){alert("Please select an image file.");event.target.value="";return;}
+ if(file.size>3*1024*1024){alert("Please choose an image smaller than 3 MB.");event.target.value="";return;}
+ const reader=new FileReader();
+ reader.onload=()=>{const preview=document.getElementById("adminProfilePhotoPreview");preview.src=reader.result;preview.style.display="block";document.getElementById("adminProfilePhotoPlaceholder").style.display="none";};
+ reader.readAsDataURL(file);
+}
+function saveAdminProfile(){
+ if(!currentUser||currentUser.role!=="admin")return;
+ const name=document.getElementById("adminEditName").value.trim();
+ const email=document.getElementById("adminEditEmail").value.trim();
+ const msg=document.getElementById("adminProfileMessage");
+ if(!name){msg.textContent="Please enter your full name.";return;}
+ if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){msg.textContent="Please enter a valid email address.";return;}
+ const preview=document.getElementById("adminProfilePhotoPreview");
+ const photo=preview.style.display==="none"?"":preview.src;
+ if(currentUser.isMaster){
+  const existing=JSON.parse(localStorage.getItem("kcard_master_admin_profile")||"{}");
+  localStorage.setItem("kcard_master_admin_profile",JSON.stringify({...existing,name,email,photo}));
+ }else{
+  const account=adminAccounts.find(a=>a.id===currentUser.id);if(!account)return;
+  account.name=name;account.email=email;account.photo=photo;
+  currentUser={...account,role:"admin"};save();
+ }
+ renderAdminProfile();msg.textContent="Profile updated successfully.";
+ setTimeout(()=>closeAdminProfile(),650);
+}
+function openAdminPasswordChange(){
+ if(!currentUser||currentUser.role!=="admin")return;
+ const current=prompt("Enter current password:");if(current===null)return;
+ const next=prompt("Enter new password (at least 8 characters):");if(next===null)return;
+ const confirm=prompt("Confirm new password:");if(confirm===null)return;
+ (async()=>{try{
+  if(next.length<8){alert("Password must be at least 8 characters.");return;}
+  if(next!==confirm){alert("Passwords do not match.");return;}
+  if(currentUser.isMaster){if(current!==ADMIN_PASS){alert("Current password is incorrect.");return;}ADMIN_PASS=next;localStorage.setItem("kcard_master_password",next);alert("Master admin password updated.");return;}
+  const account=adminAccounts.find(a=>a.id===currentUser.id);if(!account)return;
+  if(account.password!==await hashPassword(current)){alert("Current password is incorrect.");return;}
+  account.password=await hashPassword(next);currentUser={...account,role:"admin"};save();alert("Admin password updated.");
+ }catch(err){alert(err.message);}})();
+}
+function requireMasterAdmin(){if(!currentUser||currentUser.role!=="admin"){alert("Please log in with an administrator account to perform this action.");return false;}return true;}
+let pendingDeleteAction=null;
+function showDeleteConfirm(message,action){
+ const modal=document.getElementById("deleteConfirmModal"),msg=document.getElementById("deleteConfirmMessage");
+ if(!modal||!msg){alert("Confirmation dialog is unavailable. No data was deleted.");return;}
+ msg.textContent=message;pendingDeleteAction=action;modal.classList.remove("hidden");
+}
+function cancelDeleteConfirm(){pendingDeleteAction=null;document.getElementById("deleteConfirmModal")?.classList.add("hidden");}
+function proceedDeleteConfirm(){const action=pendingDeleteAction;cancelDeleteConfirm();if(typeof action==="function")action();}
+function refreshAfterDeletion(){save();renderStudentAccounts();renderAdmin();renderAdminAccounts();renderAdminProfile();}
+function deleteProofAttachment(id){
+ if(!currentUser || currentUser.role!=="admin"){
+  alert("Please log in with an administrator account to delete a submission.");
+  return;
+ }
+
+ const submission=proofs.find(p=>String(p.id)===String(id));
+ if(!submission){
+  alert("The selected submission could not be found. Refresh the page and try again.");
+  return;
+ }
+
+ const studentLabel=submission.studentName||submission.studentNumber||"the student";
+ const confirmed=window.confirm(
+  `Permanently delete this proof submission from ${studentLabel}? The uploaded attachment and submission record will be removed from both the Admin Page and the student's account. The student's account/profile will remain active.`
+ );
+ if(!confirmed)return;
+
+ try{
+  // Remove the complete proof record, not the student's account.
+  // Since the student view is rendered from the shared proofs collection,
+  // this also removes the submission from the student's side after saving.
+  proofs=proofs.filter(p=>String(p.id)!==String(id));
+  save();
+  renderAdmin();
+  renderStudentAccounts();
+  renderAdminAccounts();
+  renderAdminProfile();
+  alert("The proof submission and its attachment have been deleted from the student's records. The student account remains active.");
+ }catch(err){
+  alert("The submission could not be deleted: "+(err?.message||err));
+ }
+}
+function deleteAllAttachments(){
+ if(!requireMasterAdmin())return;const count=proofs.filter(p=>p.fileData).length;if(!count){alert("No attachments found.");return;}
+ showDeleteConfirm(`Permanently delete all ${count} attachments? Submission records will remain.`,()=>{proofs.forEach(p=>{if(p.fileData){p.fileData="";p.fileName="[Attachment deleted]";p.fileType="";p.attachmentDeletedAt=Date.now();}});refreshAfterDeletion();alert("All attachments deleted successfully.");});
+}
+function deleteStudentAccount(id){
+ if(!requireMasterAdmin())return;const a=accounts.find(x=>x.id===id);if(!a)return;
+ showDeleteConfirm(`Delete student profile for ${a.name||a.number} and all associated proof records and attachments?`,()=>{accounts=accounts.filter(x=>x.id!==id);proofs=proofs.filter(p=>p.studentId!==id);refreshAfterDeletion();});
+}
+function deleteAllStudents(){
+ if(!requireMasterAdmin())return;if(!accounts.length){alert("No student profiles found.");return;}
+ showDeleteConfirm(`Permanently delete all ${accounts.length} student profiles and their associated proof records/attachments?`,()=>{accounts=[];proofs=[];refreshAfterDeletion();alert("All student profiles and associated records deleted successfully.");});
+}
+function deleteAllProofs(){
+ if(!requireMasterAdmin())return;if(!proofs.length){alert("No proof submissions found.");return;}
+ showDeleteConfirm(`Permanently delete all ${proofs.length} proof submissions and attachments? Student profiles will remain.`,()=>{proofs=[];refreshAfterDeletion();alert("All proof submissions deleted successfully.");});
+}
+
+function renderAdmin(){
+ const unique=new Set(proofs.map(p=>p.studentId));
+ const approved=proofs.filter(p=>p.status==="Approved").length;
+ const pending=proofs.filter(p=>p.status==="Pending").length;
+
+ document.getElementById("aStudents").textContent=accounts.length;
+ document.getElementById("aProofs").textContent=proofs.length;
+ document.getElementById("aApproved").textContent=approved;
+ document.getElementById("aPending").textContent=pending;
+
+ document.getElementById("adminKGrid").innerHTML=
+ K_CATEGORIES.map((k,i)=>{
+  const count=proofs.filter(p=>p.category===k&&p.status==="Approved").length;
+  return `<div class="k-card">
+   <div class="k-icon" style="background:${LIGHT_COLORS[i]};color:${COLORS[i]};font-size:27px">${K_ICONS[i]}</div>
+   <h3>${k}</h3>
+   <strong>${count}</strong>
+   <p class="muted">Approved student achievements</p>
+  </div>`;
+ }).join("");
+
+ const filter=document.getElementById("statusFilter").value;
+ const program=document.getElementById("programFilter").value;
+ const year=document.getElementById("yearFilter").value;
+ const section=document.getElementById("sectionFilter").value;
+ const search=document.getElementById("studentSearch").value.toLowerCase();
+ const list=proofs.filter(p=>{
+  const d=proofDetails(p);
+  return (filter==="All"||p.status===filter)&&(program==="All"||d.program===program)&&
+   (year==="All"||d.yearLevel===year)&&(section==="All"||d.section===section)&&
+   ((p.studentName||"").toLowerCase().includes(search)||(p.studentNumber||"").toLowerCase().includes(search)||(p.category||"").toLowerCase().includes(search));
+ });
+ document.getElementById("adminProofTable").innerHTML=list.slice().reverse().map(p=>{
+  const d=proofDetails(p);
+  return `<tr><td>${escapeHTML(p.studentName)}</td><td>${escapeHTML(p.studentNumber)}</td>
+   <td>${escapeHTML(d.program)}</td><td>${escapeHTML(d.yearLevel)}</td><td>${escapeHTML(d.section)}</td>
+   <td>${escapeHTML(p.category)}</td><td><button class="secondary" onclick="viewProof('${p.id}')">View proof</button></td>
+   <td>${new Date(p.date).toLocaleDateString()}</td><td><span class="status ${p.status.toLowerCase()}">${p.status}</span></td>
+   <td>${p.status==="Pending"?`<div class="actions"><button class="primary" onclick="reviewProof('${p.id}','Approved')">Approve</button><button class="reject-action" onclick="reviewProof('${p.id}','Rejected')">Reject</button></div>`:"Reviewed"}<button class="delete-action" type="button" onclick="deleteProofAttachment('${p.id}')">Delete</button></td></tr>`;
+ }).join("")||'<tr><td colspan="10">No submissions found.</td></tr>';
+ renderProgramSummary();
+}
+
+
+function csvCell(v){return '"'+String(v??"").replace(/"/g,'""')+'"';}
+function downloadCSV(filename,rows){
+ const csv=rows.map(r=>r.map(csvCell).join(",")).join("\r\n");
+ const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=filename;
+ document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+function proofRows(items){
+ return [["Student Name","Student Number","Email","Program","Year Level","Section","Eight K Category","Activity Description","File Name","File Type","Date Submitted","Status","Remarks"],
+ ...items.map(p=>{const a=accountForProof(p),d=proofDetails(p);return [p.studentName,p.studentNumber,a.email||"",d.program,d.yearLevel,d.section,p.category,p.description,p.fileName,p.fileType,new Date(p.date).toLocaleString(),p.status,p.remarks||""];})];
+}
+function exportFilteredProofs(){
+ const status=document.getElementById("statusFilter").value,program=document.getElementById("programFilter").value;
+ const year=document.getElementById("yearFilter").value,section=document.getElementById("sectionFilter").value;
+ const search=document.getElementById("studentSearch").value.toLowerCase();
+ const items=proofs.filter(p=>{const d=proofDetails(p);return (status==="All"||p.status===status)&&(program==="All"||d.program===program)&&(year==="All"||d.yearLevel===year)&&(section==="All"||d.section===section)&&((p.studentName||"").toLowerCase().includes(search)||(p.studentNumber||"").toLowerCase().includes(search)||(p.category||"").toLowerCase().includes(search));});
+ downloadCSV("KCard_filtered_proof_submissions.csv",proofRows(items));
+}
+function exportProgramProofs(program){
+ const items=proofs.filter(p=>proofDetails(p).program===program);
+ const safe=program.toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"");
+ downloadCSV("KCard_"+safe+"_proof_submissions.csv",proofRows(items));
+}
+function resetProofFilters(){
+ ["statusFilter","programFilter","yearFilter","sectionFilter"].forEach(id=>document.getElementById(id).value="All");
+ document.getElementById("studentSearch").value="";renderAdmin();
+}
+function renderProgramSummary(){
+ document.getElementById("programSummary").innerHTML=PROGRAMS.map(program=>{
+  const rows=proofs.filter(p=>proofDetails(p).program===program);
+  const approved=rows.filter(p=>p.status==="Approved").length,pending=rows.filter(p=>p.status==="Pending").length;
+  const k=K_CATEGORIES.map((name,i)=>`<div class="summary-k-item">${K_ICONS[i]} ${name}<strong>${rows.filter(p=>p.category===name&&p.status==="Approved").length}</strong></div>`).join("");
+  return `<article class="program-summary-card" style="border-top:4px solid ${programColor(program)}"><h3>${escapeHTML(program)}</h3>
+   <p class="muted">${rows.length} submissions · ${approved} approved · ${pending} pending</p><div class="summary-k-list">${k}</div>
+   <button class="secondary" type="button" onclick="exportProgramProofs(${JSON.stringify(program).replace(/"/g,'&quot;')})">Export this program's raw dataset (CSV)</button></article>`;
+ }).join("");
+}
+function viewProof(id){
+ const p=proofs.find(x=>x.id===id);
+ if(!p)return;
+ if(!p.fileData){alert("This attachment has been deleted or is unavailable.");return;}
+ const w=window.open();
+ if(!w){alert("Please allow pop-ups to view the submitted proof.");return}
+ if(p.fileType.startsWith("image/")){
+  const img=w.document.createElement("img");
+  img.src=p.fileData;
+  img.style.cssText="max-width:95%;height:auto;display:block;margin:20px auto";
+  w.document.body.appendChild(img);
+ }else{
+  const link=w.document.createElement("a");
+  link.href=p.fileData;link.download=p.fileName;
+  link.textContent="Open or download submitted PDF";
+  w.document.body.appendChild(link);
+ }
+}
+
+function reviewProof(id,status){
+ const p=proofs.find(x=>x.id===id);
+ if(!p||p.status!=="Pending")return;
+ const remarks=prompt(status==="Approved"?"Optional approval remarks:":"Reason for rejection:");
+ if(remarks===null)return;
+ p.status=status;
+ p.remarks=remarks;
+ p.reviewedAt=Date.now();
+ save();
+ renderAdmin();
+}
+
+function escapeHTML(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",
+  '"':"&quot;","'":"&#39;"
+ })[c]);
+}
+
+showHome();
+</script>
+</body>
+</html>
